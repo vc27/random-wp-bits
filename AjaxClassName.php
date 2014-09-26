@@ -50,6 +50,19 @@ class AjaxClassName {
 	
 	
 	/**
+	 * errors
+	 * 
+	 * @access public
+	 * @var array
+	 **/
+	var $errors = array();
+	
+	
+	
+	
+	
+	
+	/**
 	 * __construct
 	 *
 	 * @version 1.0
@@ -61,6 +74,7 @@ class AjaxClassName {
 		$this->set( 'action', $this->settings->action );
 		
 		add_action( "wp_ajax_$this->action", array( &$this, 'do_ajax' ) );
+		add_action( "wp_ajax_nopriv_$this->action", array( &$this, 'do_ajax' ) );
 
 	} // end function __construct
 	
@@ -82,6 +96,23 @@ class AjaxClassName {
 		}
 		
 	} // end function set
+	
+	
+	
+	
+	
+	
+	/**
+	 * error
+	 *
+	 * @version 1.0
+	 * @updated 00.00.00
+	 **/
+	function error( $error_key ) {
+		
+		$this->errors[] = $error_key;
+		
+	} // end function error
 	
 	
 	
@@ -199,6 +230,9 @@ class AjaxClassName {
 			
 			header( 'Content: application/json' );
 			echo json_encode( $this->response );
+			
+			// wp_send_json_error
+			// wp_send_json_success
 
 			die();
 		
