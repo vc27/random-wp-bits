@@ -1,20 +1,19 @@
 <?php
 /**
- * File Name:   LoopVC.php
- * @subpackage: MetaCake
- * @license:    MetaCake LLC
- * @version:    0.1
- * @updated:    10.08.12
+ * @package WordPress
+ * @subpackage ProjectName
+ * @license GPL v2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ * @since 0.0.0
  **/
-#################################################################################################### */
+####################################################################################################
 
 
 
 
 /**
- * LoopVC
+ * Loop
  **/
-class LoopVC {
+class Loop {
     
     
     
@@ -132,4 +131,4 @@ class LoopVC {
     
     
     
-} // end class LoopVC
+} // end class Loop

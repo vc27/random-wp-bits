@@ -41,10 +41,11 @@ class RewriteRules {
 	 * @var array
 	 **/
 	var $rewrite_rules = array(
-		array(
-			'rule' => '^search/page/([0-9]+)/?',
-			'rewrite' => 'post_type=page&pagename=search&page=$matches[1]'
-			) );
+			array(
+				'rule' => '^search/page/([0-9]+)/?'
+				,'rewrite' => 'post_type=page&pagename=search&page=$matches[1]'
+			)
+		);
 	
 	
 	
