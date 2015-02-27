@@ -1,11 +1,8 @@
 <?php
 /**
- * File Name AjaxClassName.php
  * @package WordPress
  * @subpackage ParentTheme
  * @license GPL v2 - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * @version 1.0
- * @updated 00.00.00
  * 
  * Note: This file requires $_POST['nonce'], $_POST['case'], DOING_AJAX and is written to 
  * be ran from the wordpress admin-ajax.php system.
@@ -16,33 +13,33 @@
 
 
 /**
- * AjaxClassName
+ * AjaxGeneral
  *
  * @version 1.0
  * @updated 00.00.00
  **/
-$AjaxClassName = new AjaxClassName();
-class AjaxClassName {
+$AjaxGeneral = new AjaxGeneral();
+class AjaxGeneral {
 	
 	
 	
 	/**
-	 * msg__default_error
+	 * status
 	 * 
 	 * @access public
 	 * @var string
 	 **/
-	var $msg__error_default = 'Invalid ajax call';
+	var $status = 'error';
 	
 	
 	
 	/**
-	 * msg__default_error
+	 * message
 	 * 
 	 * @access public
 	 * @var string
 	 **/
-	var $msg__error_nonce = 'Invalid nonce';
+	var $message = 'Invalid ajax call';
 	
 	
 	
@@ -64,9 +61,6 @@ class AjaxClassName {
 	
 	/**
 	 * __construct
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function __construct() {
 		
@@ -85,9 +79,6 @@ class AjaxClassName {
 	
 	/**
 	 * set
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function set( $key, $val = false ) {
 		
@@ -104,9 +95,6 @@ class AjaxClassName {
 	
 	/**
 	 * error
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function error( $error_key ) {
 		
@@ -121,9 +109,6 @@ class AjaxClassName {
 	
 	/**
 	 * set__response
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 *
 	 * Description:
 	 * This function is used to add a new key=value
@@ -147,9 +132,6 @@ class AjaxClassName {
 	
 	/**
 	 * set__case
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function set__case() {
 		
@@ -166,14 +148,10 @@ class AjaxClassName {
 	
 	/**
 	 * set__response_html
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function set__response_html( $val ) {
 		
 		if ( isset( $val ) AND ! empty( $val ) ) {
-			
 			if ( ! isset( $this->response['html'] ) OR empty( $this->response['html'] ) ) {
 				$this->set__response( 'html', $val );
 			} else {
@@ -201,42 +179,34 @@ class AjaxClassName {
 	
 	/**
 	 * do_ajax
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function do_ajax() {
 		
-		$this->set__response( 'status', 'error' );
-		$this->set__response( 'message', $this->msg__error_default );
-		
 		if ( $this->is_doing_ajax() ) {
+			$this->check_required_paramaters();
 			
-			$this->set__response( 'message', $this->msg__error_nonce );
-			
-			if ( $this->have_case() AND $this->have_nonce() ) {
+			if ( ! $this->have_errors() ) {
 				$this->set__case();
 				$this->set( '_request', $_POST );
 				
 				switch ( $this->case ) {
 					
-					case "show-more-artists" :
-						$this->more_artists();
+					case "process-some-code" :
+						$this->process_some_code();
 						break;
 					
-				} // end switch ( $_POST['case'] )
+				} // end switch
 			
-			} // end if varify
+			} // end ! have_errors
 			
-			header( 'Content: application/json' );
-			echo json_encode( $this->response );
-			
-			// wp_send_json_error
-			// wp_send_json_success
-
-			die();
+			if ( $this->have_errors() ) {
+				$this->set__response( 'errors', $this->errors );
+				wp_send_json_error( $this->response );
+			} else {
+				wp_send_json_success( $this->response );
+			}
 		
-		} // end if DOING_AJAX
+		} // end is_doing_ajax
 		
 	} // end function do_ajax
 	
@@ -246,86 +216,25 @@ class AjaxClassName {
 	
 	
 	/**
-	 * more_artists
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
+	 * process_some_code
 	 **/
-	function more_artists() {
+	function process_some_code() {
 		
-		if ( $this->have_page() ) {
+		if ( $do_some_code ) {
 			
+			$this->set__response( 'message', 'success text message goes here' );
 			
-			/**
-			 * Note:
-			 * Globalizing is required because this is the first 
-			 * instance of the $wp_query since we are technically
-			 * in the admin-ajax.php file.
-			 **/
-			global $wp_query, $post;
-			
-			
-			
-			/**
-			 * Note:
-			 * Extract $this->_request is actually extracting $_POST
-			 * Any variable added to the jQuery.post parameters will be 
-			 * available here to use. 
-			 **/
-			extract( $this->_request, EXTR_SKIP );
-			
-			
-			
-			/**
-			 * Note:
-			 * Utilize WP_Query by what ever mean necessary in combination
-			 * with the extracted $this->_request variables to do a search.
-			 **/
-			$wp_query = new WP_Query();
-			$wp_query->query( array(
-				'paged' => $page,
-				'post_type' => 'artists',
-				'archive_ajax' => 1,
-			) );
-			
-			$this->set__response( 'is_last_page', 0 );
-			if ( $page == $wp_query->max_num_pages ) {
-				$this->set__response( 'is_last_page', 1 );
-			}			
-			
-			if ( have_posts() ) {
-				
-				$this->set__response( 'current_page', $page );
-				$this->set__response( 'next_page', ( $page + 1 ) );
-				$this->set__response( 'status', 'success' );
-				$this->set__response( 'have_posts', 1 );
-				$this->set__response( 'message', '<h3>Results found</h3>' );
-				
-				while ( have_posts() ) {
-					the_post();
-					
-					$this->set__response_html( "<li>$post->post_title</li>" );
-					
-				} // end while ( have_posts() )
-				
-			} else {
-				
-				$this->set__response( 'current_page', $page );
-				$this->set__response( 'status', 'success' );
-				$this->set__response( 'have_posts', 0 );
-				$this->set__response( 'message', '<h3>No posts found</h3>' );
-				$this->set__response( 'html', '' );
-				
-			}
+			$this->set__response_html( 'Put html here.' );
+			$this->set__response_html( ' Then append more html after that!' );
 			
 		} else {
 			
-			$this->set__response( 'status', 'error' );
-			$this->set__response( 'message', 'put your special message here' );
+			$this->error('error-id-here');
+			$this->set__response( 'message', 'error text message goes here' );
 			
 		}
 		
-	} // end function more_artists
+	} // end function process_some_code
 	
 	
 	
@@ -344,22 +253,41 @@ class AjaxClassName {
 	
 	
 	/**
-	 * have_page
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
+	 * have_errors
 	 **/
-	function have_page() {
+	function have_errors() {
 		
-		if ( isset( $this->_request['page'] ) AND ! empty( $this->_request['page'] ) AND is_numeric( $this->_request['page'] ) AND $this->_request['page'] >= 2 ) {
-			$this->set( 'have_page', 1 );
+		if ( isset( $this->errors ) AND ! empty( $this->errors ) AND is_array( $this->errors ) ) {
+			$this->set( 'have_errors', 1 );
 		} else {
-			$this->set( 'have_page', 0 );
+			$this->set( 'have_errors', 0 );
 		}
 		
-		return $this->have_page;
+		return $this->have_errors;
+		
+	} // end function have_errors
 	
-	} // end function have_page
+	
+	
+	
+	
+	
+	/**
+	 * check_required_paramaters
+	 **/
+	function check_required_paramaters() {
+		
+		if ( ! $this->have_case() ) {
+			$this->error('no-case');
+			$this->set__response( 'message', 'missing required parameters' );
+		}
+		
+		if ( ! $this->have_nonce() ) {
+			$this->error('no-nonce');
+			$this->set__response( 'message', 'missing required parameters' );
+		}
+		
+	} // end function check_required_paramaters
 	
 	
 	
@@ -368,9 +296,6 @@ class AjaxClassName {
 	
 	/**
 	 * is_doing_ajax
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function is_doing_ajax() {
 		
@@ -391,9 +316,6 @@ class AjaxClassName {
 	
 	/**
 	 * have_case
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function have_case() {
 		
@@ -414,9 +336,6 @@ class AjaxClassName {
 	
 	/**
 	 * have_nonce
-	 *
-	 * @version 1.0
-	 * @updated 00.00.00
 	 **/
 	function have_nonce() {
 		
@@ -432,4 +351,4 @@ class AjaxClassName {
 	
 	
 	
-} // end class AjaxClassName
+} // end class AjaxGeneral

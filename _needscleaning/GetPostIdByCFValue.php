@@ -51,10 +51,21 @@ class GetPostIdByCFValue {
 	 * @version 1.0
 	 * @updated 00.00.00
 	 **/
-	function __construct( $key, $value ) {
+	function __construct( $key, $value, $post_type = 'post' ) {
 		global $wpdb; 
 		
-		$this->set( 'querystr', "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '$key' AND meta_value = '$value' LIMIT 1" );
+		$this->set( 'querystr', "	SELECT post_id 
+									FROM $wpdb->postmeta 
+									LEFT JOIN $wpdb->posts ON ($wpdb->postmeta.post_id = $wpdb->posts.ID)
+									WHERE 
+										$wpdb->postmeta.meta_key = '$key' 
+										AND $wpdb->postmeta.meta_value = '$value' 
+										AND $wpdb->posts.post_status = 'publish'
+										AND $wpdb->posts.post_type = '$post_type'
+									LIMIT 1
+								" );
+		
+		
 		$this->set( 'results', $wpdb->get_results( $this->querystr ) );
 		if ( isset( $this->results[0]->post_id ) AND is_numeric( $this->results[0]->post_id ) AND $this->results[0]->post_id >= 1 ) {
 			$this->set( 'post_id', $this->results[0]->post_id );
