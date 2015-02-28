@@ -1,6 +1,9 @@
 Change-log
 ==============
 
+### 02.28.15 - 3.1.0
+- update AddonStarter with new class format and wrapper functions
+
 ### 02.27.15 - 3.0.0
 - move classes to depreciated
 - update post type page and azza
