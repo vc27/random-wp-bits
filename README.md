@@ -1,6 +1,9 @@
 Change-log
 ==============
 
+### 03.25.15 - 3.2.0
+- clean GetPostIdByCFValue class
+
 ### 02.28.15 - 3.1.0
 - update AddonStarter with new class format and wrapper functions
 
