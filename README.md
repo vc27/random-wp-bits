@@ -1,5 +1,13 @@
+The code found here is a general dumping ground for various wp-php classes. Some are spaghetti code that get the job done, some are really old ideas that never received proper attention and some are items that I use in most every project.
+
 Change-log
 ==============
+
+### 06.03.15 - 3.3.0
+- move GetPostIdByCFValue to be cleaned again
+- add GetRemoteDataWP
+- add CreatePosts
+- readme update
 
 ### 03.25.15 - 3.2.0
 - clean GetPostIdByCFValue class
