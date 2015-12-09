@@ -35,7 +35,7 @@ class TypeKitWP {
 	 * @access public
 	 * @var string
 	 **/
-	var $src = '//use.typekit.net/nci0ykc.js';
+	var $src = '//use.typekit.net/rgv1zso.js';
 
 
 
